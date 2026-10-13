@@ -1,5 +1,0 @@
-com\scamshield\MessageAnalysisServiceTest.class
-com\scamshield\UrlAnalysisServiceTest.class
-com\scamshield\GeminiServiceFallbackTest.class
-com\scamshield\AuthControllerTest.class
-com\scamshield\RiskScoringEngineTest.class
