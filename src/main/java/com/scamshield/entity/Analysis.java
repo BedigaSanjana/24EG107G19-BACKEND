@@ -3,6 +3,7 @@ package com.scamshield.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -21,8 +22,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.CollectionIdJavaType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.type.descriptor.java.UUIDJavaType;
 
 @Entity
+@GenericGenerator(name = "analysisCollectionUuid", type = Analysis.CollectionUuidGenerator.class)
 @Table(name = "analyses", indexes = {
     @Index(name = "idx_content_hash", columnList = "contentHash"),
     @Index(name = "idx_created_at", columnList = "createdAt")
@@ -90,6 +98,8 @@ public class Analysis {
         name = "analysis_safety_advice",
         joinColumns = @JoinColumn(name = "analysis_id")
     )
+    @CollectionId(column = @Column(name = "id"), generator = "analysisCollectionUuid")
+    @CollectionIdJavaType(UUIDJavaType.class)
     @Column(name = "advice", length = 500)
     private List<String> safetyAdvice = new ArrayList<>();
 
@@ -102,6 +112,8 @@ public class Analysis {
         name = "analysis_social_engineering",
         joinColumns = @JoinColumn(name = "analysis_id")
     )
+    @CollectionId(column = @Column(name = "id"), generator = "analysisCollectionUuid")
+    @CollectionIdJavaType(UUIDJavaType.class)
     @Column(name = "technique", length = 500)
     private List<String> socialEngineeringTechniques = new ArrayList<>();
 
@@ -114,6 +126,13 @@ public class Analysis {
     // ============================================================
 
     public Analysis() {
+    }
+
+    public static class CollectionUuidGenerator implements IdentifierGenerator {
+        @Override
+        public Object generate(SharedSessionContractImplementor session, Object owner) {
+            return UUID.randomUUID();
+        }
     }
 
 
@@ -289,7 +308,3 @@ public class Analysis {
         this.createdAt = createdAt;
     }
 }
-
-
-
-
